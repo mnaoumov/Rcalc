@@ -1,0 +1,613 @@
+ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &ssh ingas@maths.usyd.edu.au
+skeys
+password: notsecret
+
+cat research-machines.txt
+
+telnet briona
+R
+
+cygwin X11
+
+
+Xming
+putty
+xterm
+xfrom briona
+
+nohup Rscrpt program.R &
+nice -15 nohup Rscrpt program.R > out.txt 2>&1 &

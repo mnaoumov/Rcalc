@@ -1,0 +1,5 @@
+options(warn=2, error=quote(dump.frames("PowerCommands567", TRUE)))
+source("PowerFunctions.R")
+PowerForMu (mu=c(-5/5,0,0,5/5),distr=rexp,Z=2000,V=10000)
+PowerForMu (mu=c(-6/5,0,0,6/5),distr=rexp,Z=2000,V=10000)
+PowerForMu (mu=c(-7/5,0,0,7/5),distr=rexp,Z=2000,V=10000)

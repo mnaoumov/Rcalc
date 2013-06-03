@@ -1,0 +1,588 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: i486-pc-linux-gnu (32-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # used for permutations
+> library(gtools)
+> 
+> # used for maxNR
+> library(maxLik)
+Loading required package: miscTools
+> 
+> generateRandomMatrix = function(randomGenerator, b, k) {
++   A = matrix(randomGenerator(b * k), b, k)
++   A = A - apply(A, 1, mean)
++   A = A / sqrt(mean(A ^ 2))
++ }
+> 
+> getb = function(A) dim(A)[1]
+> getk = function(A) dim(A)[2]
+> 
+> perm = function(A, i) {
++   k = getk(A)
++   permutations(k, k - 1, A[i,])
++ }
+> 
+> expb = function(A, i, beta) exp(perm(A, i) %*% beta)
+> 
+> kappa = function(A, beta) {
++   b = getb(A)
++   k = getk(A)
++   s = 0
++   for (i in 1 : b) s = s + log(sum(expb(A, i, beta)) / prod(1 : k))
++   s / b
++ }
+>   
+> kappad = function(A, beta) {
++   b = getb(A)
++   k = getk(A)
++   s = 0
++   for (i in 1 : b) {
++     expb = expb(A, i, beta)
++     s = s + t(perm(A, i)) %*%  expb / sum(expb)
++   }
++   
++   s / b
++ }
+> 
+> kappad2 = function(A, beta) {
++   b = getb(A)
++   k = getk(A)
++   s = 0
++   for (i in 1 : b) {
++     perm = perm(A, i)
++     expb = expb(A, i, beta)
++     s = s - (t(perm) %*% expb %*% t(expb) %*% perm) / sum(expb) ^ 2 +
++       (t(perm) %*% diag(c(expb)) %*% perm) / sum(expb)
++   }
++ 
++   s / b
++ }
+> 
+> orderedMeans = function(A) {
++   b = getb(A)
++   k = getk(A)
++   ASorted = matrix(numeric(), b, k)
++   for(i in 1 : b)
++     ASorted[i,] = sort(A[i,])
++   
++   colMeans(ASorted)
++ }
+> 
+> 
+> getRandomMean = function(A) {
++   b = getb(A)
++   k = getk(A)
++     B = array(dim = c(b, k))
++   for(i in 1 : b)
++     B[i,] = sample(A[i,], k)
++ 
++   mean = apply(B, 2, mean)[1 : (k - 1)]
++     mean
++ }
+> 
+> addMu = function(A, mu) {
++   B = A
++   b = dim(B)[1]
++     for (i in 1 : b)
++     B[i,] = B[i,] + mu
++ 
++   B/sqrt(mean(B^2))
++ }
+> 
+> isPointInsideDomain = function(A, x, tolerance = 1) {
++   k = getk(A)
++   
++   y = x
++   if (length(y) == k - 1)
++     y[length(y) + 1] = -sum(y)
++   
++   stopifnot(length(y) == k)
++   
++   for (usedIndices in 1 : (k - 1)) {
++     subVectors = combinations(k, usedIndices, y, set = FALSE)
++     subVectorSums = apply(subVectors, 1, sum)
++     sumMins = sum(orderedMeans(A)[1 : usedIndices])
++     sumMaxs = sum(orderedMeans(A)[(k - usedIndices + 1) : k])
++     if (!all(subVectorSums > sumMins * tolerance))
++       return(FALSE);
++     if (!all(subVectorSums < sumMaxs * tolerance))
++       return(FALSE);
++   }
++   return(TRUE)
++ }
+> 
+> 
+> putInsideDomain = function(A, x, tolerance) {
++   if (isPointInsideDomain(A, x, tolerance))
++   {
++     return (x)
++   }
++   
++   norm = sqrt(sum(x ^ 2))
++   
++   inside = 0
++   outside = norm
++   
++   # 2^(-15) < 0.0001
++   for (i in 1 : 15) {
++     r = (inside + outside) / 2
++     y = x / norm * r
++     if (!isPointInsideDomain(A, y, tolerance))
++       outside = r
++     else
++       inside = r
++   }
++   
++   return (x / norm * inside)
++ }
+> 
+> Lambda = function(A, x, tolerance = 0.9999) {
++   k = getk(A)
++   #x = putInsideDomain(A, x, tolerance)
++   
++   ll = function(beta) { beta %*% x - kappa(A, beta) }
++   lll = function(beta) { x - kappad(A, beta)[,1] }
++   llll = function(beta) { -kappad2(A, beta) }
++   lam = try(maxNR(ll, grad = lll, hess = llll, start = rep(0, k - 1), tol = 1 - tolerance), silent = TRUE)
++   
++   if ((length(lam) == 1) && (class(lam) == "try-error")) {
++     return (list(checkNA =  1))
++   }
++   
++   lam$checkNA = 0
++   
++   lam
++ }
+> 
+> Sqr = function(M) { svd(M)$u %*% diag(sqrt(svd(M)$d)) %*% t(svd(M)$v) }
+> 
+> UniformOnSphere = function(n) {
++   x = rnorm(n)
++   r = sqrt(sum(x ^ 2))
++   x / r
++ }
+> 
+> IntOnSphereMonteCarlo = function(h, d, M) {
++   sum = 0
++   pointsSkipped = 0
++   for(i in 1 : M) {
++     funcValue = h(UniformOnSphere(d))
++     if (is.na(funcValue))
++       pointsSkipped = pointsSkipped + 1
++     else
++       sum = sum + funcValue
++   }
++   
++   if (pointsSkipped == M) {
++     return (0)
++   }
++   
++   sum / (M - pointsSkipped)
++ }
+> 
+> V0h = function(A) {
++   k = getk(A)
++   Sqr(kappad2(A, rep(0, k - 1)))  
++ }
+> 
+> transformIntoSphere = function(A, r, s) {
++   (r * V0h(A) %*% s)[,1]
++ }
+> 
+> delta = function(A, u, s, deltaIterations = 5) {
++   k = getk(A)
++   r = u
++   V0h = V0h(A)
++   
++   for (i in 1 : deltaIterations) {
++     tr = transformIntoSphere(A, r, s)
++     L = Lambda(A, tr)
++     
++     if (L$checkNA == 1) {
++       return (NA)
++     }
++     r = r - ((L$max - u ^ 2 / 2) / (L$est %*% V0h %*% s))[1,1]
++   }
++   
++   betah = L$est
++   
++   (det(kappad2(A, betah)) ^ (- 1 / 2) * r ^ (k - 2) * det(V0h)) / (u ^ (k - 3) * abs(t(s) %*% V0h %*% betah))
++ }
+> 
+> TailDistrMonteCarlo = function(A, u, M, deltaIterations = 5) {
++   k = getk(A)
++   b = getb(A)
++   
++   delta2 = function(s) delta(A, u, s, deltaIterations)
++   
++   cb = (b ^ ((k - 1) / 2)) / (2 ^ ((k - 1) / 2 - 1) * gamma((k - 1) / 2))
++   Gb = IntOnSphereMonteCarlo(delta2, k - 1, M)
++   
++   LugRice = 1 - pchisq(b * u ^ 2, k - 1) + cb / b * u ^ (k - 3) * exp(-b * u ^ 2 / 2) * (Gb - 1)
++   ustar = u - log(Gb) / (b * u)
++   NielCox = 1 - pchisq(b * ustar ^ 2, k - 1)
++   list(LR=c(LugRice), NC=c(NielCox))
++ }
+> 
+> 
+> #power
+> 
+> PowerForMu = function(mu, distr, Z=10, V=100) {
++     
++   pFValues = numeric(Z)
++   pLRValues = numeric(Z)
++   pNCValues = numeric(Z)
++   
++   for (i in 1 : Z) {
++ A = generateRandomMatrix(distr, b, k)
++ A = addMu(A, mu)
++ A = A - apply(A, 1, mean)
++ A = A / sqrt(mean(A ^ 2))
++ 
++ Xbar = getRandomMean(A)
++ Fbar = c(Xbar, -sum(Xbar))
++ LVal = Lambda(A,Xbar)
++    u = sqrt(2*LVal$max)
++ FVal = b*sum(Fbar ^ 2)/(mean(A^2))
++ 
++ xxx = NULL; for (j in 1 : V) xxx = c(xxx, apply(t(apply(A, 1, sample, size = k - 1)), 2, mean))
++ xxx = matrix(xxx, k - 1, V)
++ 
++ FValues = b * apply(xxx ^ 2, 2, sum)
++ 
++     pFValues[i] = mean(FValues > FVal)
++     tt = TailDistrMonteCarlo(A,u,M=30,deltaIterations = 5)
++     pLRValues[i] = tt$LR
++     pNCValues[i] = tt$NC
++   }
++   
++   PowerF = mean(pFValues < .05)
++   PowerLR = mean(pLRValues < .05)
++   PowerNC = mean(pNCValues < .05)
++   
++   list (PowerF = PowerF, PowerLR = PowerLR, PowerNC = PowerNC)
++ }
+> 
+> 
+> set.seed(12345)
+> 
+> b = 10
+> k = 4
+> A = generateRandomMatrix(rexp, b, k)
+> iterations = 100000
+> u = (0 : 14) / 10
+> M = 30
+> 
+> 
+> #accuracy
+> xxx = NULL; for (i in 1 : iterations) xxx = c(xxx, apply(t(apply(A, 1, sample, size = k - 1)), 2, mean))
+> xxx = matrix(xxx, k - 1, iterations)
+> 
+> Lstat = NULL; for (i in 1 : iterations) Lstat = c(Lstat, Lambda(A, xxx[,i])$max)
+> Fstat = b * apply(xxx ^ 2, 2, sum)
+> 
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> F = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> Q = round(1 - pchisq(b * u ^ 2, k - 1), 4)
+> 
+> tplr = NULL
+> tpnc = NULL
+> 
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++   tplr = c(tplr, tt$LR)
++   tpnc = c(tpnc, tt$NC)
++ }
+> rbind(F, Q, L, tplr, tpnc)
+     [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]
+F       1 0.9985700 0.9790600 0.9064500 0.7515900 0.5371700 0.3199500 0.1501900
+Q       1 0.9918000 0.9402000 0.8254000 0.6594000 0.4753000 0.3080000 0.1793000
+L       1 0.9989500 0.9863899 0.9359594 0.8184382 0.6405964 0.4424144 0.2722527
+tplr    1 0.9955106 0.9635716 0.8924834 0.7827741 0.6312145 0.4151110 0.2447475
+tpnc    0 0.9949785 0.9604634 0.8828910 0.7638425 0.6075298 0.4036841 0.2395384
+          [,9]      [,10]      [,11]      [,12]        [,13]        [,14]
+F    0.0529200 0.01328000 0.00216000 0.00013000 0.0000100000 0.000000e+00
+Q    0.0937000 0.04400000 0.01860000 0.00700000 0.0024000000 7.000000e-04
+L    0.1506615 0.07498075 0.03369034 0.01407014 0.0056800568 1.790018e-03
+tplr 0.1471918 0.08143255 0.04599707 0.02485413 0.0001478023 3.940158e-05
+tpnc 0.1424333 0.07776601 0.04260862 0.02214131 0.0000000000 0.000000e+00
+            [,15]
+F    0.000000e+00
+Q    2.000000e-04
+L    6.200062e-04
+tplr 9.546920e-06
+tpnc 0.000000e+00
+> 
+> 
+> 
+> 
+> set.seed(12345)
+> 
+> b = 10
+> k = 4
+> A = generateRandomMatrix(rnorm, b, k)
+> iterations = 100000
+> u = (0 : 14) / 10
+> M = 30
+> 
+> 
+> #accuracy
+> xxx = NULL; for (i in 1 : iterations) xxx = c(xxx, apply(t(apply(A, 1, sample, size = k - 1)), 2, mean))
+> xxx = matrix(xxx, k - 1, iterations)
+> 
+> Lstat = NULL; for (i in 1 : iterations) Lstat = c(Lstat, Lambda(A, xxx[,i])$max)
+> Fstat = b * apply(xxx ^ 2, 2, sum)
+> 
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> F = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> Q = round(1 - pchisq(b * u ^ 2, k - 1), 4)
+> 
+> tplr = NULL
+> tpnc = NULL
+> 
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++   tplr = c(tplr, tt$LR)
++   tpnc = c(tpnc, tt$NC)
++ }
+> rbind(F, Q, L, tplr, tpnc)
+     [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]
+F       1 0.9909300 0.9328700 0.8108500 0.6399000 0.4624400 0.3074500 0.1851700
+Q       1 0.9918000 0.9402000 0.8254000 0.6594000 0.4753000 0.3080000 0.1793000
+L       1 0.9924000 0.9452700 0.8410900 0.6863600 0.5106000 0.3468800 0.2120400
+tplr    1 0.9924998 0.9489571 0.8427323 0.6867937 0.5152172 0.3491392 0.2105744
+tpnc    0 0.9924817 0.9485072 0.8420562 0.6857820 0.5135105 0.3473403 0.2093229
+          [,9]      [,10]      [,11]      [,12]       [,13]       [,14]
+F    0.1013400 0.04981000 0.02095000 0.00779000 0.002570000 0.000450000
+Q    0.0937000 0.04400000 0.01860000 0.00700000 0.002400000 0.000700000
+L    0.1183200 0.06014000 0.02738000 0.01157000 0.004370000 0.001450000
+tplr 0.1168370 0.05999246 0.02727320 0.01130177 0.004296038 0.001530639
+tpnc 0.1158788 0.05925507 0.02686823 0.01109838 0.004201073 0.001486759
+            [,15]
+F    0.0000800000
+Q    0.0002000000
+L    0.0004700000
+tplr 0.0005131049
+tpnc 0.0004936200
+> 
+> 
+> set.seed(12345)
+> 
+> b = 5
+> k = 3
+> A = generateRandomMatrix(rexp, b, k)
+> iterations = 100000
+> u = (0 : 14) / 10
+> M = 30
+> 
+> 
+> #accuracy
+> xxx = NULL; for (i in 1 : iterations) xxx = c(xxx, apply(t(apply(A, 1, sample, size = k - 1)), 2, mean))
+> xxx = matrix(xxx, k - 1, iterations)
+> 
+> Lstat = NULL; for (i in 1 : iterations) Lstat = c(Lstat, Lambda(A, xxx[,i])$max)
+> Fstat = b * apply(xxx ^ 2, 2, sum)
+> 
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> F = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> Q = round(1 - pchisq(b * u ^ 2, k - 1), 4)
+> 
+> tplr = NULL
+> tpnc = NULL
+> 
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++   tplr = c(tplr, tt$LR)
++   tpnc = c(tpnc, tt$NC)
++ }
+> rbind(F, Q, L, tplr, tpnc)
+     [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]
+F       1 1.0000000 1.0000000 0.9924300 0.9014200 0.6957800 0.4579100 0.2979200
+Q       1 0.9753000 0.9048000 0.7985000 0.6703000 0.5353000 0.4066000 0.2938000
+L       1 1.0000000 1.0000000 1.0000000 0.9840905 0.8547080 0.6750147 0.5079396
+tplr    0 0.9877294 0.9618143 0.9258871 0.8951426 0.8048343 0.9671961 0.9289331
+tpnc    0 0.9861492 0.9528893 0.9036260 0.8495443 0.7530184 0.7850672 0.7087742
+          [,9]         [,10]        [,11]        [,12]         [,13]
+F    0.1698700  7.126000e-02 9.190000e-03 0.000000e+00  0.000000e+00
+Q    0.2019000  1.320000e-01 8.210000e-02 4.860000e-02  2.730000e-02
+L    0.3584753  2.412351e-01 1.558544e-01 8.671744e-02  5.662001e-02
+tplr 0.9000023 -2.775558e-17 4.163336e-17 1.387779e-17 -3.816392e-17
+tpnc 0.6348202  0.000000e+00 0.000000e+00 0.000000e+00  0.000000e+00
+            [,14]        [,15]
+F    0.000000e+00 0.000000e+00
+Q    1.460000e-02 7.400000e-03
+L    3.671035e-02 2.148948e-02
+tplr 5.377643e-17 3.989864e-17
+tpnc 0.000000e+00 0.000000e+00
+> 
+> 
+> 
+> 
+> set.seed(12345)
+> 
+> b = 10
+> k = 4
+> A = generateRandomMatrix(runif, b, k)
+> iterations = 100000
+> u = (0 : 14) / 10
+> M = 30
+> 
+> 
+> #accuracy
+> xxx = NULL; for (i in 1 : iterations) xxx = c(xxx, apply(t(apply(A, 1, sample, size = k - 1)), 2, mean))
+> xxx = matrix(xxx, k - 1, iterations)
+> 
+> Lstat = NULL; for (i in 1 : iterations) Lstat = c(Lstat, Lambda(A, xxx[,i])$max)
+> Fstat = b * apply(xxx ^ 2, 2, sum)
+> 
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> F = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> Q = round(1 - pchisq(b * u ^ 2, k - 1), 4)
+> 
+> tplr = NULL
+> tpnc = NULL
+> 
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++   tplr = c(tplr, tt$LR)
++   tpnc = c(tpnc, tt$NC)
++ }
+> rbind(F, Q, L, tplr, tpnc)
+     [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]
+F       1 0.9906800 0.9321000 0.8087500 0.6403300 0.4633900 0.3056700 0.1845600
+Q       1 0.9918000 0.9402000 0.8254000 0.6594000 0.4753000 0.3080000 0.1793000
+L       1 0.9923700 0.9461400 0.8407500 0.6835600 0.5067600 0.3412600 0.2090200
+tplr    1 0.9923672 0.9468844 0.8427453 0.6863148 0.5159988 0.3460896 0.2084126
+tpnc    0 0.9923556 0.9466218 0.8420682 0.6853378 0.5142259 0.3445428 0.2073245
+          [,9]      [,10]      [,11]      [,12]       [,13]       [,14]
+F    0.1015000 0.04996000 0.02159000 0.00832000 0.002700000 0.000570000
+Q    0.0937000 0.04400000 0.01860000 0.00700000 0.002400000 0.000700000
+L    0.1161400 0.05863000 0.02693000 0.01125000 0.004180000 0.001470000
+tplr 0.1164182 0.05913172 0.02746884 0.01130852 0.004603130 0.001714656
+tpnc 0.1154933 0.05846879 0.02704632 0.01110452 0.004477343 0.001650256
+            [,15]
+F    0.0001200000
+Q    0.0002000000
+L    0.0004300000
+tplr 0.0005393334
+tpnc 0.0005167553
+> 
+> 
+> set.seed(12345)
+> 
+> b = 10
+> k = 4
+> A = array(rexp(b * k)^2, c(b, k))
+> A = A - apply(A, 1, mean)
+> A = A / sqrt(mean(A ^ 2))
+> iterations = 100000
+> u = (0 : 14) / 10
+> M = 30
+> 
+> 
+> #accuracy
+> xxx = NULL; for (i in 1 : iterations) xxx = c(xxx, apply(t(apply(A, 1, sample, size = k - 1)), 2, mean))
+> xxx = matrix(xxx, k - 1, iterations)
+> 
+> Lstat = NULL; for (i in 1 : iterations) Lstat = c(Lstat, Lambda(A, xxx[,i])$max)
+> Fstat = b * apply(xxx ^ 2, 2, sum)
+> 
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> F = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> Q = round(1 - pchisq(b * u ^ 2, k - 1), 4)
+> 
+> tplr = NULL
+> tpnc = NULL
+> 
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++   tplr = c(tplr, tt$LR)
++   tpnc = c(tpnc, tt$NC)
++ }
+> rbind(F, Q, L, tplr, tpnc)
+     [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]
+F       1 1.0000000 1.0000000 0.9993100 0.9464000 0.6694900 0.2590100 0.0337800
+Q       1 0.9918000 0.9402000 0.8254000 0.6594000 0.4753000 0.3080000 0.1793000
+L       1 1.0000000 1.0000000 1.0000000 0.9941498 0.8850866 0.6457594 0.4048421
+tplr    1 0.9980850 0.9790044 0.9618891 0.9804553 1.0166214 0.8037105 0.6110202
+tpnc    0 0.9966065 0.9707568 0.9252370 0.8712109 0.8001805 0.6265448 0.4607912
+           [,9]       [,10]       [,11]        [,12]        [,13]        [,14]
+F    0.00100000 0.000000000 0.000000000 0.0000000000 0.0000000000 0.000000e+00
+Q    0.09370000 0.044000000 0.018600000 0.0070000000 0.0024000000 7.000000e-04
+L    0.22626679 0.112623379 0.051221537 0.0205306159 0.0077102313 2.980089e-03
+tplr 0.01141204 0.004426526 0.001565402 0.0005042182 0.0001478023 3.940158e-05
+tpnc 0.00000000 0.000000000 0.000000000 0.0000000000 0.0000000000 0.000000e+00
+            [,15]
+F    0.000000e+00
+Q    2.000000e-04
+L    9.300279e-04
+tplr 9.546920e-06
+tpnc 0.000000e+00
+> 
+> 
+> set.seed(12345)
+> 
+> b = 10
+> k = 4
+> A = array(rgamma(b * k,4), c(b, k))
+> A = A - apply(A, 1, mean)
+> A = A / sqrt(mean(A ^ 2))
+> iterations = 100000
+> u = (0 : 14) / 10
+> M = 30
+> 
+> 
+> #accuracy
+> xxx = NULL; for (i in 1 : iterations) xxx = c(xxx, apply(t(apply(A, 1, sample, size = k - 1)), 2, mean))
+> xxx = matrix(xxx, k - 1, iterations)
+> 
+> Lstat = NULL; for (i in 1 : iterations) Lstat = c(Lstat, Lambda(A, xxx[,i])$max)
+> Fstat = b * apply(xxx ^ 2, 2, sum)
+> 
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> F = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> Q = round(1 - pchisq(b * u ^ 2, k - 1), 4)
+> 
+> tplr = NULL
+> tpnc = NULL
+> 
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++   tplr = c(tplr, tt$LR)
++   tpnc = c(tpnc, tt$NC)
++ }
+> rbind(F, Q, L, tplr, tpnc)
+     [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]
+F       1 0.9906800 0.9333400 0.8121600 0.6473200 0.4703700 0.3116000 0.1866200
+Q       1 0.9918000 0.9402000 0.8254000 0.6594000 0.4753000 0.3080000 0.1793000
+L       1 0.9928700 0.9469400 0.8437300 0.6936100 0.5214700 0.3560600 0.2220300
+tplr    1 0.9932070 0.9439290 0.8473788 0.6941346 0.5220692 0.3473165 0.2251663
+tpnc    0 0.9931304 0.9438475 0.8462965 0.6925182 0.5197397 0.3456705 0.2225335
+          [,9]      [,10]      [,11]      [,12]       [,13]       [,14]
+F    0.1000900 0.04734000 0.01910000 0.00636000 0.001850000 0.000380000
+Q    0.0937000 0.04400000 0.01860000 0.00700000 0.002400000 0.000700000
+L    0.1258600 0.06380000 0.02941000 0.01239000 0.004790000 0.001820000
+tplr 0.1229972 0.06229717 0.02876995 0.01196507 0.004837040 0.001892859
+tpnc 0.1214844 0.06134261 0.02822225 0.01169773 0.004685316 0.001805594
+           [,15]
+F    7.00000e-05
+Q    2.00000e-04
+L    6.70000e-04
+tplr 9.54692e-06
+tpnc 0.00000e+00
+> 

@@ -1,0 +1,9 @@
+bivona: Idle time 51.70% on 32 CPUs over 156.24 days; load 34.52 39/716 24052
+briona: Idle time 60.02% on 12 CPUs over 133.36 days; load 0.05 1/163 20237
+carona: Idle time 47.51% on  8 CPUs over 105.28 days; load 0.05 1/227 12145
+cetona: Idle time 51.81% on  8 CPUs over 105.28 days; load 0.78 2/274 8166
+gemona: Idle time 44.32% on 24 CPUs over  30.20 days; load 33.97 37/303 17545
+ippona: Idle time 56.51% on  8 CPUs over 132.08 days; load 20.08 21/225 4981
+ossona: Idle time 54.35% on  8 CPUs over  30.20 days; load 10.08 11/183 19382
+parona: Idle time 41.48% on  8 CPUs over  30.20 days; load 11.04 12/186 30147
+strona: Idle time 61.31% on  8 CPUs over 132.08 days; load 9.05 10/178 27403
