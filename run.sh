@@ -1,0 +1,1 @@
+nice -15 nohup R < $1.R --vanilla > result$1.txt 2>&1 &
