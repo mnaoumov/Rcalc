@@ -198,6 +198,13 @@ PowerForMu = function(mu, distr, f, Z=1000, M=10000) {
     Fbar = c(Xbar, -sum(Xbar))
 
     LVal = kLam(Xbar, rep(0, 2 * (k - 1)), a, f)
+    if (LVal$checkNA == 1) {
+      pFValues[i] = NA
+      pSPLRValues[i] = NA
+      pSPBNValues[i] = NA
+      next
+    }
+
        u = sqrt(2*LVal$lam)
     FVal = c(N*Fbar%*%diag(1/c(n,N-sum(n)))%*%Fbar)
    
@@ -211,10 +218,10 @@ PowerForMu = function(mu, distr, f, Z=1000, M=10000) {
     pSPBNValues[i] = tt2[2]
   }
   
-  PowerF = mean(pFValues < .05)
+  PowerF = mean(pFValues[!is.na(pFValues)] < .05)
   #PowerL = mean(pLValues < .05)
-  PowerSPLR = mean(pSPLRValues < .05)
-  PowerSPBN = mean(pSPBNValues < .05)
+  PowerSPLR = mean(pSPLRValues[!is.na(pSPLRValues)] < .05)
+  PowerSPBN = mean(pSPBNValues[!is.na(pSPBNValues)] < .05)
 
   list (PowerF = PowerF, PowerSPLR = PowerSPLR,PowerSPBN = PowerSPBN)
 }
