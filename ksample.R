@@ -1,4 +1,4 @@
-options(warn=2)
+options(warn=2, error=quote(dump.frames("ksample", TRUE)))
 
 kcgf= function(tau,xd, f)
 {
