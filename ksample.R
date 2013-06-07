@@ -78,7 +78,7 @@ kHu=function(xd, f, v,M)
         svdV=svd(VV)
         Vh=svdV$u%*%diag(svdV$d^(1/2))%*%t(svdV$v)
         Gu=0
-        sdelus=matrix(0,M,lf+4)
+        #sdelus=matrix(0,M,lf+4)
         Mm=M                              
         for (i in 1:M){
                        s=rnorm(lf)
@@ -101,13 +101,13 @@ kHu=function(xd, f, v,M)
                        #Gu=ifelse(abs(v-sqrt(2*kl$lam))>.00001,Gu,Gu+delus)
                        if (kl$checkNA==0) Gu=Gu+delus
                        if (kl$checkNA==1) Mm=Mm-1 
-sdelus[i,]=c(delus,r*s,v-sqrt(2*kl$lam),sum(s*kl$t[(lf+1):(2*lf)]),det(kcgf(kl$t,xd,f)$ddcgf))
+#sdelus[i,]=c(delus,r*s,v-sqrt(2*kl$lam),sum(s*kl$t[(lf+1):(2*lf)]),det(kcgf(kl$t,xd,f)$ddcgf))
                       #if(abs(v-sqrt(2*kl$lam))>.00001) print(c(abs(v-sqrt(2*temk)),det(kcgf(kl$t,xd,f)$ddcgf)))
                        }
         cn=(nn^(lf/2))/((2)^(lf/2-1)*gamma(lf/2))      
         tailp=ifelse(Mm==0,tailp1,tailp1+nn^(-1)*cn*v^(lf-2)*exp(-nn*v^2/2)*(Gu/Mm-1))
         tailpBN=ifelse(Mm==0,tailp1,1-pchisq(nn*(v-log(Gu/Mm)/(nn*v))^2,lf))
-        list(tailpchi2=tailp1,tailp=c(tailp,tailpBN),sdelus=sdelus,Mm=Mm)
+        list(tailpchi2=tailp1,tailp=c(tailp,tailpBN),Mm=Mm)
 }
 
 
