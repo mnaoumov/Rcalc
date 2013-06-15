@@ -227,7 +227,6 @@ TailDistrMonteCarlo = function(A, u, M, deltaIterations = 5) {
 #power
 
 PowerForMu = function(mu, distr, Z=10, V=100) {
-b=10;k=4;    
   pFValues = numeric(Z)
   pLRValues = numeric(Z)
   pNCValues = numeric(Z)
