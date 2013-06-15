@@ -1,0 +1,277 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: i486-pc-linux-gnu (32-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> options(warn=2, error=quote(dump.frames("BlockExp2Gamma", TRUE)))
+> source("PowerFunctions.R")
+Loading required package: miscTools
+> 
+> rexp2 = function(N) {
++   rexp(N) ^ 2
++ }
+> 
+> rgamma05 = function(N) {
++   rgamma(N, 0.5)
++ }
+> 
+> rgamma5 = function(N) {
++   rgamma(N, 5)
++ }
+> 
+> PowerForMu (mu=c(0,0,0,0),distr=rexp2,Z=1000,V=10000)
+$PowerF
+[1] 0.051
+
+$PowerLR
+[1] 0.057
+
+$PowerNC
+[1] 0.063
+
+> PowerForMu (mu=c(-1/5,0,0,1/5),distr=rexp2,Z=1000,V=10000)
+$PowerF
+[1] 0.1005025
+
+$PowerLR
+[1] 0.1688442
+
+$PowerNC
+[1] 0.1778894
+
+> PowerForMu (mu=c(-2/5,0,0,2/5),distr=rexp2,Z=1000,V=10000)
+$PowerF
+[1] 0.2300706
+
+$PowerLR
+[1] 0.3188698
+
+$PowerNC
+[1] 0.3279516
+
+> PowerForMu (mu=c(-3/5,0,0,3/5),distr=rexp2,Z=1000,V=10000)
+$PowerF
+[1] 0.490433
+
+$PowerLR
+[1] 0.5448137
+
+$PowerNC
+[1] 0.550856
+
+> PowerForMu (mu=c(-4/5,0,0,4/5),distr=rexp2,Z=1000,V=10000)
+$PowerF
+[1] 0.7107943
+
+$PowerLR
+[1] 0.7270876
+
+$PowerNC
+[1] 0.7311609
+
+> PowerForMu (mu=c(-5/5,0,0,5/5),distr=rexp2,Z=1000,V=10000)
+$PowerF
+[1] 0.840081
+
+$PowerLR
+[1] 0.8319838
+
+$PowerNC
+[1] 0.8319838
+
+> PowerForMu (mu=c(-6/5,0,0,6/5),distr=rexp2,Z=1000,V=10000)
+$PowerF
+[1] 0.986802
+
+$PowerLR
+[1] 0.9756345
+
+$PowerNC
+[1] 0.9766497
+
+> PowerForMu (mu=c(-7/5,0,0,7/5),distr=rexp2,Z=1000,V=10000)
+$PowerF
+[1] 1
+
+$PowerLR
+[1] 1
+
+$PowerNC
+[1] 1
+
+> 
+> PowerForMu (mu=c(0,0,0,0),distr=rgamma05,Z=1000,V=10000)
+$PowerF
+[1] 0.043
+
+$PowerLR
+[1] 0.036
+
+$PowerNC
+[1] 0.037
+
+> PowerForMu (mu=c(-1/5,0,0,1/5),distr=rgamma05,Z=1000,V=10000)
+$PowerF
+[1] 0.09409409
+
+$PowerLR
+[1] 0.09309309
+
+$PowerNC
+[1] 0.0960961
+
+> PowerForMu (mu=c(-2/5,0,0,2/5),distr=rgamma05,Z=1000,V=10000)
+$PowerF
+[1] 0.2312312
+
+$PowerLR
+[1] 0.2702703
+
+$PowerNC
+[1] 0.2792793
+
+> PowerForMu (mu=c(-3/5,0,0,3/5),distr=rgamma05,Z=1000,V=10000)
+$PowerF
+[1] 0.4457831
+
+$PowerLR
+[1] 0.4779116
+
+$PowerNC
+[1] 0.4839357
+
+> PowerForMu (mu=c(-4/5,0,0,4/5),distr=rgamma05,Z=1000,V=10000)
+$PowerF
+[1] 0.7095477
+
+$PowerLR
+[1] 0.7256281
+
+$PowerNC
+[1] 0.7266332
+
+> PowerForMu (mu=c(-5/5,0,0,5/5),distr=rgamma05,Z=1000,V=10000)
+$PowerF
+[1] 0.8946841
+
+$PowerLR
+[1] 0.887663
+
+$PowerNC
+[1] 0.891675
+
+> PowerForMu (mu=c(-6/5,0,0,6/5),distr=rgamma05,Z=1000,V=10000)
+$PowerF
+[1] 0.9688129
+
+$PowerLR
+[1] 0.9627767
+
+$PowerNC
+[1] 0.9627767
+
+> PowerForMu (mu=c(-7/5,0,0,7/5),distr=rgamma05,Z=1000,V=10000)
+$PowerF
+[1] 1
+
+$PowerLR
+[1] 1
+
+$PowerNC
+[1] 1
+
+> 
+> PowerForMu (mu=c(0,0,0,0),distr=rgamma5,Z=1000,V=10000)
+$PowerF
+[1] 0.062
+
+$PowerLR
+[1] 0.07
+
+$PowerNC
+[1] 0.071
+
+> PowerForMu (mu=c(-1/5,0,0,1/5),distr=rgamma5,Z=1000,V=10000)
+$PowerF
+[1] 0.079
+
+$PowerLR
+[1] 0.08
+
+$PowerNC
+[1] 0.081
+
+> PowerForMu (mu=c(-2/5,0,0,2/5),distr=rgamma5,Z=1000,V=10000)
+$PowerF
+[1] 0.183
+
+$PowerLR
+[1] 0.183
+
+$PowerNC
+[1] 0.187
+
+> PowerForMu (mu=c(-3/5,0,0,3/5),distr=rgamma5,Z=1000,V=10000)
+$PowerF
+[1] 0.354
+
+$PowerLR
+[1] 0.357
+
+$PowerNC
+[1] 0.361
+
+> PowerForMu (mu=c(-4/5,0,0,4/5),distr=rgamma5,Z=1000,V=10000)
+$PowerF
+[1] 0.642
+
+$PowerLR
+[1] 0.64
+
+$PowerNC
+[1] 0.642
+
+> PowerForMu (mu=c(-5/5,0,0,5/5),distr=rgamma5,Z=1000,V=10000)
+$PowerF
+[1] 0.9048096
+
+$PowerLR
+[1] 0.8977956
+
+$PowerNC
+[1] 0.8997996
+
+> PowerForMu (mu=c(-6/5,0,0,6/5),distr=rgamma5,Z=1000,V=10000)
+$PowerF
+[1] 0.9799398
+
+$PowerLR
+[1] 0.9829488
+
+$PowerNC
+[1] 0.9839519
+
+> PowerForMu (mu=c(-7/5,0,0,7/5),distr=rgamma5,Z=1000,V=10000)
+$PowerF
+[1] 0.998996
+
+$PowerLR
+[1] 0.998996
+
+$PowerNC
+[1] 0.998996
+
+> 
