@@ -1,0 +1,106 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: i486-pc-linux-gnu (32-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> options(warn=2, error=quote(dump.frames("block-power-new", TRUE)))
+> source("PowerFunctions.R")
+Loading required package: miscTools
+> 
+> b=5
+> k=3
+> 
+> PowerForMu (mu=c(0,0,0),distr=rexp,Z=1000,V=10000)
+$PowerF
+[1] 0.03714859
+
+$PowerLR
+[1] 0.07630522
+
+$PowerNC
+[1] 0.07831325
+
+> PowerForMu (mu=c(-1/5,0,1/5),distr=rexp,Z=1000,V=10000)
+$PowerF
+[1] 0.06539235
+
+$PowerLR
+[1] 0.1247485
+
+$PowerNC
+[1] 0.1247485
+
+> PowerForMu (mu=c(-2/5,0,2/5),distr=rexp,Z=1000,V=10000)
+$PowerF
+[1] 0.1171717
+
+$PowerLR
+[1] 0.1757576
+
+$PowerNC
+[1] 0.1767677
+
+> PowerForMu (mu=c(-3/5,0,3/5),distr=rexp,Z=1000,V=10000)
+$PowerF
+[1] 0.2006079
+
+$PowerLR
+[1] 0.2654509
+
+$PowerNC
+[1] 0.2684904
+
+> PowerForMu (mu=c(-4/5,0,4/5),distr=rexp,Z=1000,V=10000)
+$PowerF
+[1] 0.2568528
+
+$PowerLR
+[1] 0.3360406
+
+$PowerNC
+[1] 0.3360406
+
+> PowerForMu (mu=c(-5/5,0,5/5),distr=rexp,Z=1000,V=10000)
+$PowerF
+[1] 0.4107505
+
+$PowerLR
+[1] 0.4543611
+
+$PowerNC
+[1] 0.459432
+
+> PowerForMu (mu=c(-6/5,0,6/5),distr=rexp,Z=1000,V=10000)
+$PowerF
+[1] 0.5428571
+
+$PowerLR
+[1] 0.5489796
+
+$PowerNC
+[1] 0.5540816
+
+> PowerForMu (mu=c(-7/5,0,7/5),distr=rexp,Z=1000,V=10000)
+$PowerF
+[1] 0.7051546
+
+$PowerLR
+[1] 0.6958763
+
+$PowerNC
+[1] 0.7051546
+
+> 
