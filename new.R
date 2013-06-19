@@ -1,3 +1,6 @@
+options(warn=2, error=quote(dump.frames("new", TRUE)))
+source("PowerFunctions.R")
+
 rexp2 = function(N) {
   rexp(N) ^ 2
 }
