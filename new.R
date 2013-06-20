@@ -50,7 +50,7 @@ for (j in 1:100){
   QMC
   round(Q,4)
   FMCall=rbind(FMCall,FMC)
-  QMCall=rbind(QMCall,FMC)
+  QMCall=rbind(QMCall,QMC)
 } 
 
 apply(FMCall,2,mean)#
