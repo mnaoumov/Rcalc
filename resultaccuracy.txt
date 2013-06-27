@@ -1,0 +1,315 @@
+
+R version 2.15.2 (2012-10-26) -- "Trick or Treat"
+Copyright (C) 2012 The R Foundation for Statistical Computing
+ISBN 3-900051-07-0
+Platform: i486-pc-linux-gnu (32-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> options(warn=2, error=quote(dump.frames("accuracy", TRUE)))
+> source("PowerFunctions.R")
+Loading required package: miscTools
+> 
+> 
+> rexp2 = function(N) {
++   rexp(N) ^ 2
++ }
+> 
+> rgamma5 = function(N) {
++   rgamma(N, 5)
++ }
+> 
+> rgamma05 = function(N) {
++   rgamma(N, 0.5)
++ }
+>  
+> b = 10
+> k = 4
+> 
+> u = (7 : 14) / 10
+> M = 30
+> 
+> #accuracy normal
+> A = generateRandomMatrix(rnorm, b, k)
+> iterations = 100000 
+> 
+> Fstat = NULL
+> Lstat = NULL
+>  
+>   for (i in 1 : iterations) {
++     B = t(apply(A, 1, sample, size = k))
++    xx = apply(B, 2, mean)
++ SST = b * sum(xx ^ 2) 
++ SSE = sum((B-matrix(xx,b,k,byrow=TRUE))^2)
++ Fstat = c(Fstat, (SST/ (k - 1)) / (SSE / ((k - 1) * (b - 1)) ))
++ Lstat = c(Lstat, Lambda(A, xx[-k])$max)
++    }
+>  
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> FMC = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> QMC = apply(outer(Fstat*(k-1), b * u ^ 2, ">"), 2, mean)
+> Q = 1 - pchisq(b * u ^ 2, k - 1)
+> F = 1 - pf(b * u ^ 2 , k-1, (k-1) * (b-1))
+>  
+> tplr = NULL
+> tpnc = NULL
+>   
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++  tplr = c(tplr, tt$LR)
++  tpnc = c(tpnc, tt$NC)
++  }
+> 
+> rbind(FMC, F=round(F,4), QMC, Q=round(Q,4), L , LR=round(tplr,4), NC=round(tpnc,4))
+       [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]    [,8]
+FMC 0.00812 0.00223 0.00052 0.00018 0.00005 0.00001 0.00001 0.00001
+F   0.00760 0.00200 0.00050 0.00010 0.00000 0.00000 0.00000 0.00000
+QMC 0.20570 0.12022 0.06622 0.03565 0.01816 0.00882 0.00407 0.00190
+Q   0.17930 0.09370 0.04400 0.01860 0.00700 0.00240 0.00070 0.00020
+L   0.21010 0.11597 0.05799 0.02702 0.01147 0.00433 0.00158 0.00054
+LR  0.21070 0.11560 0.05980 0.02720 0.01170 0.00470 0.00180 0.00060
+NC  0.20940 0.11480 0.05900 0.02680 0.01150 0.00460 0.00170 0.00060
+>   
+> 
+> #accuarcy unif
+> A = generateRandomMatrix(runif, b, k)
+> iterations = 100000 
+> 
+> Fstat = NULL
+> Lstat = NULL
+>  
+>   for (i in 1 : iterations) {
++     B = t(apply(A, 1, sample, size = k))
++    xx = apply(B, 2, mean)
++ SST = b * sum(xx ^ 2) 
++ SSE = sum((B-matrix(xx,b,k,byrow=TRUE))^2)
++ Fstat = c(Fstat, (SST/ (k - 1)) / (SSE / ((k - 1) * (b - 1)) ))
++ Lstat = c(Lstat, Lambda(A, xx[-k])$max)
++    }
+>  
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> FMC = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> QMC = apply(outer(Fstat*(k-1), b * u ^ 2, ">"), 2, mean)
+> Q = 1 - pchisq(b * u ^ 2, k - 1)
+> F = 1 - pf(b * u ^ 2 , k-1, (k-1) * (b-1))
+>  
+> tplr = NULL
+> tpnc = NULL
+>   
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++  tplr = c(tplr, tt$LR)
++  tpnc = c(tpnc, tt$NC)
++  }
+> 
+> rbind(FMC, F=round(F,4), QMC, Q=round(Q,4), L , LR=round(tplr,4), NC=round(tpnc,4))
+       [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]    [,8]
+FMC 0.00813 0.00221 0.00073 0.00026 0.00006 0.00001 0.00000 0.00000
+F   0.00760 0.00200 0.00050 0.00010 0.00000 0.00000 0.00000 0.00000
+QMC 0.20553 0.12077 0.06681 0.03578 0.01826 0.00887 0.00444 0.00196
+Q   0.17930 0.09370 0.04400 0.01860 0.00700 0.00240 0.00070 0.00020
+L   0.21204 0.11807 0.05924 0.02707 0.01105 0.00411 0.00139 0.00053
+LR  0.21120 0.11660 0.05660 0.02740 0.01180 0.00490 0.00170 0.00060
+NC  0.20990 0.11560 0.05610 0.02700 0.01160 0.00470 0.00170 0.00060
+>  
+> 
+> #accuarcy exp
+> A = generateRandomMatrix(rexp, b, k)
+> iterations = 100000 
+> 
+> Fstat = NULL
+> Lstat = NULL
+>  
+>   for (i in 1 : iterations) {
++     B = t(apply(A, 1, sample, size = k))
++    xx = apply(B, 2, mean)
++ SST = b * sum(xx ^ 2) 
++ SSE = sum((B-matrix(xx,b,k,byrow=TRUE))^2)
++ Fstat = c(Fstat, (SST/ (k - 1)) / (SSE / ((k - 1) * (b - 1)) ))
++ Lstat = c(Lstat, Lambda(A, xx[-k])$max)
++    }
+>  
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> FMC = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> QMC = apply(outer(Fstat*(k-1), b * u ^ 2, ">"), 2, mean)
+> Q = 1 - pchisq(b * u ^ 2, k - 1)
+> F = 1 - pf(b * u ^ 2 , k-1, (k-1) * (b-1))
+>  
+> tplr = NULL
+> tpnc = NULL
+>   
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++  tplr = c(tplr, tt$LR)
++  tpnc = c(tpnc, tt$NC)
++  }
+> 
+> rbind(FMC, F=round(F,4), QMC, Q=round(Q,4), L , LR=round(tplr,4), NC=round(tpnc,4))
+         [,1]      [,2]      [,3]       [,4]       [,5]        [,6]        [,7]
+FMC 0.0079600 0.0023400 0.0006300 0.00015000 0.00004000 0.000020000 0.000010000
+F   0.0076000 0.0020000 0.0005000 0.00010000 0.00000000 0.000000000 0.000000000
+QMC 0.2041000 0.1212800 0.0662300 0.03451000 0.01715000 0.008670000 0.004260000
+Q   0.1793000 0.0937000 0.0440000 0.01860000 0.00700000 0.002400000 0.000700000
+L   0.2109321 0.1191212 0.0595206 0.02751028 0.01181012 0.004860049 0.001630016
+LR  0.2176000 0.1196000 0.0600000 0.02780000 0.01240000 0.005000000 0.001800000
+NC  0.2158000 0.1184000 0.0593000 0.02740000 0.01210000 0.004800000 0.001700000
+            [,8]
+FMC 0.0000100000
+F   0.0000000000
+QMC 0.0021200000
+Q   0.0002000000
+L   0.0004700047
+LR  0.0006000000
+NC  0.0006000000
+>  
+> #accuracy exp squared
+> A = generateRandomMatrix(rexp2, b, k)
+> iterations = 100000 
+> 
+> Fstat = NULL
+> Lstat = NULL
+>  
+>   for (i in 1 : iterations) {
++     B = t(apply(A, 1, sample, size = k))
++    xx = apply(B, 2, mean)
++ SST = b * sum(xx ^ 2) 
++ SSE = sum((B-matrix(xx,b,k,byrow=TRUE))^2)
++ Fstat = c(Fstat, (SST/ (k - 1)) / (SSE / ((k - 1) * (b - 1)) ))
++ Lstat = c(Lstat, Lambda(A, xx[-k])$max)
++    }
+>  
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> FMC = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> QMC = apply(outer(Fstat*(k-1), b * u ^ 2, ">"), 2, mean)
+> Q = 1 - pchisq(b * u ^ 2, k - 1)
+> F = 1 - pf(b * u ^ 2 , k-1, (k-1) * (b-1))
+>  
+> tplr = NULL
+> tpnc = NULL
+>   
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++  tplr = c(tplr, tt$LR)
++  tpnc = c(tpnc, tt$NC)
++  }
+> 
+> rbind(FMC, F=round(F,4), QMC, Q=round(Q,4), L , LR=round(tplr,4), NC=round(tpnc,4))
+         [,1]      [,2]      [,3]       [,4]       [,5]        [,6]        [,7]
+FMC 0.0000000 0.0000000 0.0000000 0.00000000 0.00000000 0.000000000 0.000000000
+F   0.0076000 0.0020000 0.0005000 0.00010000 0.00000000 0.000000000 0.000000000
+QMC 0.1057600 0.0371800 0.0075300 0.00216000 0.00011000 0.000000000 0.000000000
+Q   0.1793000 0.0937000 0.0440000 0.01860000 0.00700000 0.002400000 0.000700000
+L   0.3474513 0.2024782 0.1060495 0.05054455 0.02178196 0.008520767 0.003080277
+LR  1.0906000 1.0974000 0.0044000 0.00160000 0.00050000 0.000100000 0.000000000
+NC  0.6183000 0.5164000 0.0000000 0.00000000 0.00000000 0.000000000 0.000000000
+           [,8]
+FMC 0.000000000
+F   0.000000000
+QMC 0.000000000
+Q   0.000200000
+L   0.000900081
+LR  0.000000000
+NC  0.000000000
+>  
+> 
+> #accuracy gamma5
+> A = generateRandomMatrix(rgamma5, b, k)
+> iterations = 100000 
+> 
+> Fstat = NULL
+> Lstat = NULL
+>  
+>   for (i in 1 : iterations) {
++     B = t(apply(A, 1, sample, size = k))
++    xx = apply(B, 2, mean)
++ SST = b * sum(xx ^ 2) 
++ SSE = sum((B-matrix(xx,b,k,byrow=TRUE))^2)
++ Fstat = c(Fstat, (SST/ (k - 1)) / (SSE / ((k - 1) * (b - 1)) ))
++ Lstat = c(Lstat, Lambda(A, xx[-k])$max)
++    }
+>  
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> FMC = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> QMC = apply(outer(Fstat*(k-1), b * u ^ 2, ">"), 2, mean)
+> Q = 1 - pchisq(b * u ^ 2, k - 1)
+> F = 1 - pf(b * u ^ 2 , k-1, (k-1) * (b-1))
+>  
+> tplr = NULL
+> tpnc = NULL
+>   
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++  tplr = c(tplr, tt$LR)
++  tpnc = c(tpnc, tt$NC)
++  }
+> 
+> rbind(FMC, F=round(F,4), QMC, Q=round(Q,4), L , LR=round(tplr,4), NC=round(tpnc,4))
+       [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]    [,8]
+FMC 0.00470 0.00076 0.00007 0.00000 0.00000 0.00000 0.00000 0.00000
+F   0.00760 0.00200 0.00050 0.00010 0.00000 0.00000 0.00000 0.00000
+QMC 0.20432 0.11615 0.06086 0.02869 0.01287 0.00527 0.00188 0.00066
+Q   0.17930 0.09370 0.04400 0.01860 0.00700 0.00240 0.00070 0.00020
+L   0.22640 0.12818 0.06603 0.02997 0.01308 0.00479 0.00158 0.00058
+LR  0.23450 0.13410 0.06580 0.03000 0.01220 0.00490 0.00200 0.00000
+NC  0.23070 0.13130 0.06440 0.02930 0.01190 0.00470 0.00190 0.00000
+>  
+> #accuracy gamma05
+> A = generateRandomMatrix(rgamma05, b, k)
+> iterations = 100000 
+> 
+> Fstat = NULL
+> Lstat = NULL
+>  
+>   for (i in 1 : iterations) {
++     B = t(apply(A, 1, sample, size = k))
++    xx = apply(B, 2, mean)
++ SST = b * sum(xx ^ 2) 
++ SSE = sum((B-matrix(xx,b,k,byrow=TRUE))^2)
++ Fstat = c(Fstat, (SST/ (k - 1)) / (SSE / ((k - 1) * (b - 1)) ))
++ Lstat = c(Lstat, Lambda(A, xx[-k])$max)
++    }
+>  
+> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
+> FMC = apply(outer(Fstat, b * u ^ 2, ">"), 2, mean)
+> QMC = apply(outer(Fstat*(k-1), b * u ^ 2, ">"), 2, mean)
+> Q = 1 - pchisq(b * u ^ 2, k - 1)
+> F = 1 - pf(b * u ^ 2 , k-1, (k-1) * (b-1))
+>  
+> tplr = NULL
+> tpnc = NULL
+>   
+> for (up in u) {
++   tt = TailDistrMonteCarlo(A, up, M)
++  tplr = c(tplr, tt$LR)
++  tpnc = c(tpnc, tt$NC)
++  }
+> 
+> rbind(FMC, F=round(F,4), QMC, Q=round(Q,4), L , LR=round(tplr,4), NC=round(tpnc,4))
+         [,1]      [,2]       [,3]       [,4]       [,5]        [,6]
+FMC 0.0057900 0.0013800 0.00032000 0.00006000 0.00001000 0.000000000
+F   0.0076000 0.0020000 0.00050000 0.00010000 0.00000000 0.000000000
+QMC 0.2049900 0.1159700 0.06009000 0.02870000 0.01336000 0.006390000
+Q   0.1793000 0.0937000 0.04400000 0.01860000 0.00700000 0.002400000
+L   0.2370124 0.1367714 0.07130071 0.03546035 0.01598016 0.006300063
+LR  0.2255000 0.1423000 0.07670000 0.03980000 0.02380000 0.011000000
+NC  0.2228000 0.1383000 0.07390000 0.03760000 0.02140000 0.009600000
+           [,7]         [,8]
+FMC 0.000000000 0.0000000000
+F   0.000000000 0.0000000000
+QMC 0.002590000 0.0012700000
+Q   0.000700000 0.0002000000
+L   0.002230022 0.0008100081
+LR  0.003900000 0.0000000000
+NC  0.003400000 0.0000000000
+>  
+> 
