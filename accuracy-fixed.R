@@ -1,6 +1,5 @@
-options(warn=2, error=quote(dump.frames("accuracy", TRUE)))
-source("PowerFunctions.R")
-
+options(warn=2, error=quote(dump.frames("accuracy-fixed", TRUE)))
+source("PowerFunctions-fixed.R")
 
 rexp2 = function(N) {
   rexp(N) ^ 2
