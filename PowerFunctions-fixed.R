@@ -134,19 +134,11 @@ putInsideDomain = function(A, x, tolerance) {
 
 Lambda = function(A, x, tolerance = 0.9999) {
   k = getk(A)
-  #x = putInsideDomain(A, x, tolerance)
-  
+  if(isPointInsideDomain(A,x)==FALSE) x=.999*x
   ll = function(beta) { beta %*% x - kappa(A, beta) }
   lll = function(beta) { x - kappad(A, beta)[,1] }
   llll = function(beta) { -kappad2(A, beta) }
-  lam = try(maxNR(ll, grad = lll, hess = llll, start = rep(0, k - 1), tol = 1 - tolerance), silent = TRUE)
-  
-  if ((length(lam) == 1) && (class(lam) == "try-error")) {
-    return (list(checkNA =  1))
-  }
-  
-  lam$checkNA = 0
-  
+  lam = maxNR(ll, grad = lll, hess = llll, start = rep(0, k - 1), tol = 1 - tolerance)
   lam
 }
 
@@ -195,12 +187,13 @@ delta = function(A, u, s, deltaIterations = 5) {
   
   for (i in 1 : deltaIterations) {
     tr = transformIntoSphere(A, r, s)
-    L = Lambda(A, tr)
+    while (isPointInsideDomain(A,tr)==FALSE) {
+    r=.9*r
+    tr = transformIntoSphere(A, r, s)}
     
-    if (L$checkNA == 1) {
-      return (NA)
-    }
+    L = Lambda(A, tr)
     r = r - ((L$max - u ^ 2 / 2) / (L$est %*% V0h %*% s))[1,1]
+       
   }
   
   betah = L$est
@@ -222,7 +215,6 @@ TailDistrMonteCarlo = function(A, u, M, deltaIterations = 5) {
   NielCox = 1 - pchisq(b * ustar ^ 2, k - 1)
   list(LR=c(LugRice), NC=c(NielCox))
 }
-
 
 #power
 
