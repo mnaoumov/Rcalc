@@ -1,6 +1,5 @@
 options(warn=2, error=quote(dump.frames("k-sample-power-all-distr", TRUE)))
 
-
 kcgf= function(tau,xd, f)
 {
 #This function calculates K(tau), K"(tau) and K"(tau), where
@@ -21,7 +20,7 @@ kcgf= function(tau,xd, f)
         nn1=rep(1,nn)
         x2=rbind(nn1,x)
         kt = mean(log(f1 + f%*%exp(taum%*%x2)))
-	  h=t(t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
+      h=t(t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
         hx=t(x*t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
         hhx=rbind(h,hx)
         dk = c(h%*%t(x2)/nn)
@@ -37,8 +36,8 @@ kLam=function(x1,t0,xd,f)
 #Inputs: x1: a given k-1-dimension vector.
 #        tt: an initial value for Newton's method of finding the 
 #            root of  k'(t)-x for a given x.
-#	 xd: population.
-#	 f=n/N
+#    xd: population.
+#    f=n/N
 #Outputs: Lam$lam=\Lambda(x)
 #         Lam$t=t(x), 3-dimension vector, t(x)%*%x-K(t(x))=sup{t.x-K(t): t}
 #         Lam$$kdd K"(t(x))
@@ -49,13 +48,13 @@ kLam=function(x1,t0,xd,f)
        lf=length(f)
        tt=rep(0,2*lf)
       for (i in 1:10)
-	{   
-	    ktt=kcgf(tt,xd,f)
-	    if (!is.na(det(ktt$ddcgf)) && det(ktt$ddcgf)>.00000001)
-	    {tt=tt+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)} else {{checkNA=1}&{break}}#t0=t0+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)
+    {   
+        ktt=kcgf(tt,xd,f)
+        if (!is.na(det(ktt$ddcgf)) && det(ktt$ddcgf)>.00000001)
+        {tt=tt+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)} else {{checkNA=1}&{break}}#t0=t0+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)
         }
-	ktt=kcgf(tt,xd,f)
-	list(lam=-ktt$cgf+fx%*%tt,t=tt,kdd=ktt$ddcgf,err=fx-ktt$dcgf,checkNA=checkNA)
+    ktt=kcgf(tt,xd,f)
+    list(lam=-ktt$cgf+fx%*%tt,t=tt,kdd=ktt$ddcgf,err=fx-ktt$dcgf,checkNA=checkNA)
 }
 
 
@@ -158,73 +157,6 @@ library(gtools)
 library(maxLik)
 
 
-#misha's programma
-
-
-generateVector = function(randomGenerator, N) {
-  a = randomGenerator(N)
-  N = length(a)
-  a = (a - mean(a)) / sqrt(var(a) * (N - 1) / N)
-  a
-}
-
-getMean = function(b, f) {
-  k = length(f) + 1
-  N = length(b)
-  f1 = c(f, 1 - sum(f))
-  n = f1 * N
-  
-  means = numeric(k - 1)
-  lastIndex = 0
-  for (i in 1 : (k - 1)) {
-    nextIndex = lastIndex + n[i]
-    means[i] = sum(b[(lastIndex + 1) : nextIndex]) / N;
-    lastIndex = nextIndex
-  }
-  
-  means
-}
-
-PowerForMu = function(mu, distr, f, Z=1000, M=10000) {
-  k = length(f) + 1
-  N = length(mu)
-  n = f*N
-    
-  pFValues = numeric(Z)
-  #pLValues = numeric(Z)
-  pSPLRValues = numeric(Z)
-  pSPBNValues = numeric(Z)
-  
-  for (i in 1 : Z) {
-    a = generateVector(distr, N)
-    a = a + mu
-    a = (a - mean(a)) / sqrt(var(a) * (N - 1) / N)
-    Xbar = getMean(a, f)
-    Fbar = c(Xbar, -sum(Xbar))
-
-    LVal = kLam(Xbar, rep(0, 2 * (k - 1)), a, f)
-       u = sqrt(2*LVal$lam)
-    FVal = c(N*Fbar%*%diag(1/c(n,N-sum(n)))%*%Fbar)
-   
-    FValues = pvalcal(a,f,MC=M)$MCsqpv
-    #LValues = NULL
-    
-    pFValues[i] = mean(FValues > FVal)
-    #pLValues[i] = mean(TValues > TVal)
-	tt2 = kHu(a, f, u, 100)$tailp
-    pSPLRValues[i] = tt2[1]
-    pSPBNValues[i] = tt2[2]
-  }
-  
-  PowerF = mean(pFValues < .05)
-  #PowerL = mean(pLValues < .05)
-  PowerSPLR = mean(pSPLRValues < .05)
-  PowerSPBN = mean(pSPBNValues < .05)
-
-  list (PowerF = PowerF, PowerSPLR = PowerSPLR,PowerSPBN = PowerSPBN)
-}
-
-
 generateVector = function(randomGenerator, N) {
   a = randomGenerator(N)
   N = length(a)
@@ -281,7 +213,7 @@ for (j in 1 : M) {
    }
     
     pFValues[i] = mean(FValue > FVal)
-    	tt2 = kHu(a, f, u, 10)$tailp
+        tt2 = kHu(a, f, u, 10)$tailp
     pSPLRValues[i] = tt2[1]
     pSPBNValues[i] = tt2[2]
   }
@@ -308,56 +240,25 @@ for (j in 1 : M) {
 
 f=c(.25,.25,.25)
 
-#power norm
-mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
-PowerForMu(mu,rnorm,f,1000,1000)
-
-mu=c(rep(-.3,10),rep(0,10),rep(0,10),rep(.3,10))
-PowerForMu(mu,rnorm,f,1000,1000)
-
-mu=c(rep(-.5,10),rep(0,10),rep(0,10),rep(.5,10))
-PowerForMu(mu,rnorm,f,1000,1000)
-
-mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
-PowerForMu(mu,rnorm,f,1000,1000)
-
-mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
-PowerForMu(mu,rnorm,f,1000,1000)
-
-mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
-PowerForMu(mu,rnorm,f,1000,1000)
-
-mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-PowerForMu(mu,rnorm,f,1000,1000)
-
-mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-PowerForMu(mu,rnorm,f,1000,1000)
-
-
 #power unif
 mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
-PowerForMu(mu,unif,f,1000,1000)
+PowerForMu(mu,runif,f,1000,1000)
 
 mu=c(rep(-.3,10),rep(0,10),rep(0,10),rep(.3,10))
-PowerForMu(mu,unif,f,1000,1000)
+PowerForMu(mu,runif,f,1000,1000)
 
 mu=c(rep(-.5,10),rep(0,10),rep(0,10),rep(.5,10))
-PowerForMu(mu,unif,f,1000,1000)
+PowerForMu(mu,runif,f,1000,1000)
 
 mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
-PowerForMu(mu,unif,f,1000,1000)
+PowerForMu(mu,runif,f,1000,1000)
 
 mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
-PowerForMu(mu,unif,f,1000,1000)
+PowerForMu(mu,runif,f,1000,1000)
 
 mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
 PowerForMu(mu,runif,f,1000,1000)
 
-mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-PowerForMu(mu,runif,f,1000,1000)
-
-mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-PowerForMu(mu,runif,f,1000,1000)
 
 #power exp
 mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
@@ -373,15 +274,6 @@ mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
 PowerForMu(mu,rexp,f,1000,1000)
 
 mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
-PowerForMu(mu,rexp,f,1000,1000)
-
-mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
-PowerForMu(mu,rexp,f,1000,1000)
-
-mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-PowerForMu(mu,rexp,f,1000,1000)
-
-mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
 PowerForMu(mu,rexp,f,1000,1000)
 
 
@@ -403,37 +295,6 @@ PowerForMu(mu,rexp2,f,1000,1000)
 
 mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
 PowerForMu(mu,rexp2,f,1000,1000)
-
-mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-PowerForMu(mu,rexp2,f,1000,1000)
-
-mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
-
-#power gamma5
-mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
-
-mu=c(rep(-.3,10),rep(0,10),rep(0,10),rep(.3,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
-
-mu=c(rep(-.5,10),rep(0,10),rep(0,10),rep(.5,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
-
-mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
-
-mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
-
-mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
-
-mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
-
-mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-PowerForMu(mu,rgamma5,f,1000,1000)
 
 
 #power gamma05
