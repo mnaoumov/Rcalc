@@ -38,7 +38,7 @@ Type 'q()' to quit R.
 +         nn1=rep(1,nn)
 +         x2=rbind(nn1,x)
 +         kt = mean(log(f1 + f%*%exp(taum%*%x2)))
-+ 	  h=t(t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
++     h=t(t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
 +         hx=t(x*t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
 +         hhx=rbind(h,hx)
 +         dk = c(h%*%t(x2)/nn)
@@ -54,8 +54,8 @@ Type 'q()' to quit R.
 + #Inputs: x1: a given k-1-dimension vector.
 + #        tt: an initial value for Newton's method of finding the 
 + #            root of  k'(t)-x for a given x.
-+ #	 xd: population.
-+ #	 f=n/N
++ #  xd: population.
++ #  f=n/N
 + #Outputs: Lam$lam=\Lambda(x)
 + #         Lam$t=t(x), 3-dimension vector, t(x)%*%x-K(t(x))=sup{t.x-K(t): t}
 + #         Lam$$kdd K"(t(x))
@@ -66,13 +66,13 @@ Type 'q()' to quit R.
 +        lf=length(f)
 +        tt=rep(0,2*lf)
 +       for (i in 1:10)
-+ 	{   
-+ 	    ktt=kcgf(tt,xd,f)
-+ 	    if (!is.na(det(ktt$ddcgf)) && det(ktt$ddcgf)>.00000001)
-+ 	    {tt=tt+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)} else {{checkNA=1}&{break}}#t0=t0+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)
++   {   
++       ktt=kcgf(tt,xd,f)
++       if (!is.na(det(ktt$ddcgf)) && det(ktt$ddcgf)>.00000001)
++       {tt=tt+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)} else {{checkNA=1}&{break}}#t0=t0+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)
 +         }
-+ 	ktt=kcgf(tt,xd,f)
-+ 	list(lam=-ktt$cgf+fx%*%tt,t=tt,kdd=ktt$ddcgf,err=fx-ktt$dcgf,checkNA=checkNA)
++   ktt=kcgf(tt,xd,f)
++   list(lam=-ktt$cgf+fx%*%tt,t=tt,kdd=ktt$ddcgf,err=fx-ktt$dcgf,checkNA=checkNA)
 + }
 > 
 > 
@@ -231,65 +231,13 @@ Error: object 'xsd' not found
 + }
 > round(rbind(FMC, F, QMC, Q, L, LR=tplr, BN=tpnc),5)
        [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]
-FMC 0.78367 0.26045 0.04159 0.00448 0.00036 0.00002 0.00000
+FMC 0.97298 0.73913 0.34354 0.10393 0.02440 0.00555 0.00114
 F   0.75382 0.20638 0.02258 0.00137 0.00006 0.00000 0.00000
-QMC 0.95402 0.72184 0.38614 0.13619 0.02924 0.00340 0.00019
+QMC 0.99609 0.96005 0.83173 0.58607 0.29003 0.08954 0.01421
 Q   0.94024 0.65939 0.30802 0.09369 0.01857 0.00241 0.00021
-L   0.95428 0.72767 0.40641 0.16462 0.04878 0.01173 0.00181
-LR  0.94723 0.69477 0.34950 0.11875 0.02761 0.00446 0.00048
-BN  0.94694 0.69309 0.34767 0.11763 0.02718 0.00435 0.00046
-> 
-> 
-> 
-> #accuracy unif
-> xd = runif(40)
-> xsd = sqrt(var(xd)*(nn-1)/nn)
-> xdb = mean(xd)
-> xd = (xd - xdb)/xsd
-> lf = length(f)   #k-1
-> f1 = 1-sum(f)
-> nn = length(xd)
-> n = f*nn
-> N = c(0,cumsum(n))
-> 
-> Fstat = NULL
-> Lstat = NULL
-> Qstat = NULL
->  
->   for (i in 1 : iterations) {
-+    xs = sample(xd,nn)
-+    xsb = rep(0,lf)
-+    for (j in 1:lf) {xsb[j]=sum(xs[(N[j]+1):N[j+1]])/nn}
-+    xsbk = c(xsb,-sum(xsb))
-+    Fstat = c(Fstat, (nn*xsbk%*%diag(1/c(f,f1))%*%xsbk/lf)/    
-+ ((nn - nn*xsbk%*%diag(1/c(f,f1))%*%xsbk)/(nn-lf-1))  )
-+    Qstat = c(Qstat, nn*xsbk%*%diag(1/c(f,f1))%*%xsbk)
-+    Lstat = c(Lstat,kLam(xsb,rep(0,2*lf),xd,f)$lam)   
-+    }
-> 
-> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
-> FMC = apply(outer(Fstat, nn * u ^ 2, ">"), 2, mean)
-> QMC = apply(outer(Qstat, nn * u ^ 2, ">"), 2, mean)
-> Q = 1 - pchisq(nn * u ^ 2, lf)
-> F = 1 - pf(nn * u ^ 2 , lf, (nn-lf-1))
-> 
-> 
-> tplr = NULL
-> tpnc = NULL
-> for (up in u) {
-+   tt2 = kHu(xd,f,up,100)
-+   tplr = c(tplr,tt2$tailp[1])
-+   tpnc = c(tpnc,tt2$tailp[2])
-+ }
-> round(rbind(FMC, F, QMC, Q, L, LR=tplr, BN=tpnc),5)
-       [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]
-FMC 0.75129 0.20897 0.02491 0.00197 0.00013 0.00000 0.00000
-F   0.75382 0.20638 0.02258 0.00137 0.00006 0.00000 0.00000
-QMC 0.94651 0.68176 0.32823 0.09793 0.01685 0.00147 0.00005
-Q   0.94024 0.65939 0.30802 0.09369 0.01857 0.00241 0.00021
-L   0.94682 0.68751 0.34591 0.11839 0.02807 0.00496 0.00054
-LR  0.94751 0.68705 0.34412 0.11639 0.02737 0.00430 0.00050
-BN  0.94719 0.68602 0.34273 0.11547 0.02696 0.00420 0.00049
+L   0.99611 0.96195 0.84912 0.64829 0.40467 0.20836 0.09096
+LR  0.94841 0.69281 0.35172 0.12184 0.02861 0.00457 0.00051
+BN  0.94801 0.69131 0.34969 0.12044 0.02808 0.00445 0.00049
 > 
 > #accuracy exp
 > xd = rexp(40)
@@ -333,113 +281,14 @@ BN  0.94719 0.68602 0.34273 0.11547 0.02696 0.00420 0.00049
 + }
 > round(rbind(FMC, F, QMC, Q, L, LR=tplr, BN=tpnc),5)
        [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]
-FMC 0.75346 0.20499 0.02210 0.00162 0.00018 0.00003 0.00000
+FMC 0.75388 0.20345 0.02212 0.00156 0.00008 0.00001 0.00000
 F   0.75382 0.20638 0.02258 0.00137 0.00006 0.00000 0.00000
-QMC 0.94768 0.68268 0.32647 0.09390 0.01481 0.00118 0.00007
+QMC 0.94724 0.68399 0.32586 0.09294 0.01452 0.00120 0.00001
 Q   0.94024 0.65939 0.30802 0.09369 0.01857 0.00241 0.00021
-L   0.94801 0.69025 0.35059 0.12204 0.02826 0.00481 0.00065
-LR  0.94525 0.69610 0.34882 0.12094 0.02920 0.00517 0.00069
-BN  0.94510 0.69430 0.34705 0.11962 0.02861 0.00498 0.00065
+L   0.94767 0.69212 0.34870 0.11887 0.02760 0.00459 0.00051
+LR  0.94780 0.69381 0.35425 0.12086 0.02814 0.00500 0.00063
+BN  0.94746 0.69222 0.35198 0.11956 0.02766 0.00483 0.00060
 > 
-> #accuracy exponential squared
-> xd = rexp(40)^2
-> xsd = sqrt(var(xd)*(nn-1)/nn)
-> xdb = mean(xd)
-> xd = (xd - xdb)/xsd
-> lf = length(f)   #k-1
-> f1 = 1-sum(f)
-> nn = length(xd)
-> n = f*nn
-> N = c(0,cumsum(n))
-> 
-> Fstat = NULL
-> Lstat = NULL
-> Qstat = NULL
->  
->   for (i in 1 : iterations) {
-+    xs = sample(xd,nn)
-+    xsb = rep(0,lf)
-+    for (j in 1:lf) {xsb[j]=sum(xs[(N[j]+1):N[j+1]])/nn}
-+    xsbk = c(xsb,-sum(xsb))
-+    Fstat = c(Fstat, (nn*xsbk%*%diag(1/c(f,f1))%*%xsbk/lf)/    
-+ ((nn - nn*xsbk%*%diag(1/c(f,f1))%*%xsbk)/(nn-lf-1))  )
-+    Qstat = c(Qstat, nn*xsbk%*%diag(1/c(f,f1))%*%xsbk)
-+    Lstat = c(Lstat,kLam(xsb,rep(0,2*lf),xd,f)$lam)   
-+    }
-> 
-> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
-> FMC = apply(outer(Fstat, nn * u ^ 2, ">"), 2, mean)
-> QMC = apply(outer(Qstat, nn * u ^ 2, ">"), 2, mean)
-> Q = 1 - pchisq(nn * u ^ 2, lf)
-> F = 1 - pf(nn * u ^ 2 , lf, (nn-lf-1))
-> 
-> 
-> tplr = NULL
-> tpnc = NULL
-> for (up in u) {
-+   tt2 = kHu(xd,f,up,100)
-+   tplr = c(tplr,tt2$tailp[1])
-+   tpnc = c(tpnc,tt2$tailp[2])
-+ }
-> round(rbind(FMC, F, QMC, Q, L, LR=tplr, BN=tpnc),5)
-       [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]
-FMC 0.80201 0.18821 0.01323 0.00056 0.00003 0.00000 0.00000
-F   0.75382 0.20638 0.02258 0.00137 0.00006 0.00000 0.00000
-QMC 0.96624 0.73189 0.32665 0.07400 0.00769 0.00041 0.00000
-Q   0.94024 0.65939 0.30802 0.09369 0.01857 0.00241 0.00021
-L   0.96719 0.75848 0.41255 0.15618 0.04036 0.00646 0.00070
-LR  0.95578 0.74873 0.41227 0.20003 0.07425 0.01879 0.00021
-BN  0.95437 0.73852 0.40141 0.18325 0.06278 0.01483 0.00021
-> 
-> #accuracy gamma05
-> xd = rgamma(40,.5)
-> xsd = sqrt(var(xd)*(nn-1)/nn)
-> xdb = mean(xd)
-> xd = (xd - xdb)/xsd
-> lf = length(f)   #k-1
-> f1 = 1-sum(f)
-> nn = length(xd)
-> n = f*nn
-> N = c(0,cumsum(n))
-> 
-> Fstat = NULL
-> Lstat = NULL
-> Qstat = NULL
->  
->   for (i in 1 : iterations) {
-+    xs = sample(xd,nn)
-+    xsb = rep(0,lf)
-+    for (j in 1:lf) {xsb[j]=sum(xs[(N[j]+1):N[j+1]])/nn}
-+    xsbk = c(xsb,-sum(xsb))
-+    Fstat = c(Fstat, (nn*xsbk%*%diag(1/c(f,f1))%*%xsbk/lf)/    
-+ ((nn - nn*xsbk%*%diag(1/c(f,f1))%*%xsbk)/(nn-lf-1))  )
-+    Qstat = c(Qstat, nn*xsbk%*%diag(1/c(f,f1))%*%xsbk)
-+    Lstat = c(Lstat,kLam(xsb,rep(0,2*lf),xd,f)$lam)   
-+    }
-> 
-> L = apply(outer(Lstat, u ^ 2 / 2, ">"), 2, mean)
-> FMC = apply(outer(Fstat, nn * u ^ 2, ">"), 2, mean)
-> QMC = apply(outer(Qstat, nn * u ^ 2, ">"), 2, mean)
-> Q = 1 - pchisq(nn * u ^ 2, lf)
-> F = 1 - pf(nn * u ^ 2 , lf, (nn-lf-1))
-> 
-> 
-> tplr = NULL
-> tpnc = NULL
-> for (up in u) {
-+   tt2 = kHu(xd,f,up,100)
-+   tplr = c(tplr,tt2$tailp[1])
-+   tpnc = c(tpnc,tt2$tailp[2])
-+ }
-> round(rbind(FMC, F, QMC, Q, L, LR=tplr, BN=tpnc),5)
-       [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]
-FMC 0.76096 0.20470 0.02022 0.00132 0.00012 0.00000 0.00000
-F   0.75382 0.20638 0.02258 0.00137 0.00006 0.00000 0.00000
-QMC 0.94999 0.69360 0.33167 0.08977 0.01313 0.00097 0.00003
-Q   0.94024 0.65939 0.30802 0.09369 0.01857 0.00241 0.00021
-L   0.95072 0.70456 0.36738 0.12804 0.03103 0.00479 0.00058
-LR  0.94908 0.70621 0.36313 0.13033 0.03219 0.00646 0.00098
-BN  0.94861 0.70331 0.35995 0.12801 0.03125 0.00608 0.00088
 > 
 > #accuracy gamma5
 > xd = rgamma(40, 5)
@@ -483,11 +332,11 @@ BN  0.94861 0.70331 0.35995 0.12801 0.03125 0.00608 0.00088
 + }
 > round(rbind(FMC, F, QMC, Q, L, LR=tplr, BN=tpnc),5)
        [,1]    [,2]    [,3]    [,4]    [,5]    [,6]    [,7]
-FMC 0.75571 0.20769 0.02290 0.00150 0.00006 0.00000 0.00000
+FMC 0.75187 0.20664 0.02361 0.00125 0.00004 0.00001 0.00000
 F   0.75382 0.20638 0.02258 0.00137 0.00006 0.00000 0.00000
-QMC 0.94752 0.68661 0.32960 0.09582 0.01478 0.00104 0.00001
+QMC 0.94613 0.68208 0.32511 0.09700 0.01552 0.00084 0.00003
 Q   0.94024 0.65939 0.30802 0.09369 0.01857 0.00241 0.00021
-L   0.94788 0.69326 0.35041 0.11902 0.02671 0.00418 0.00047
-LR  0.94678 0.69184 0.34830 0.11874 0.02822 0.00436 0.00049
-BN  0.94653 0.69043 0.34657 0.11763 0.02773 0.00426 0.00047
+L   0.94649 0.68818 0.34437 0.11837 0.02747 0.00418 0.00030
+LR  0.94741 0.68972 0.34742 0.11885 0.02763 0.00437 0.00048
+BN  0.94711 0.68849 0.34577 0.11772 0.02720 0.00427 0.00047
 > 

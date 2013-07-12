@@ -18,7 +18,6 @@ Type 'q()' to quit R.
 
 > options(warn=2, error=quote(dump.frames("k-sample-power-all-distr", TRUE)))
 > 
-> 
 > kcgf= function(tau,xd, f)
 + {
 + #This function calculates K(tau), K"(tau) and K"(tau), where
@@ -39,7 +38,7 @@ Type 'q()' to quit R.
 +         nn1=rep(1,nn)
 +         x2=rbind(nn1,x)
 +         kt = mean(log(f1 + f%*%exp(taum%*%x2)))
-+ 	  h=t(t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
++       h=t(t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
 +         hx=t(x*t(f * exp(taum%*%x2))/c(f1 + f %*% exp(taum%*%x2)))
 +         hhx=rbind(h,hx)
 +         dk = c(h%*%t(x2)/nn)
@@ -55,8 +54,8 @@ Type 'q()' to quit R.
 + #Inputs: x1: a given k-1-dimension vector.
 + #        tt: an initial value for Newton's method of finding the 
 + #            root of  k'(t)-x for a given x.
-+ #	 xd: population.
-+ #	 f=n/N
++ #    xd: population.
++ #    f=n/N
 + #Outputs: Lam$lam=\Lambda(x)
 + #         Lam$t=t(x), 3-dimension vector, t(x)%*%x-K(t(x))=sup{t.x-K(t): t}
 + #         Lam$$kdd K"(t(x))
@@ -67,13 +66,13 @@ Type 'q()' to quit R.
 +        lf=length(f)
 +        tt=rep(0,2*lf)
 +       for (i in 1:10)
-+ 	{   
-+ 	    ktt=kcgf(tt,xd,f)
-+ 	    if (!is.na(det(ktt$ddcgf)) && det(ktt$ddcgf)>.00000001)
-+ 	    {tt=tt+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)} else {{checkNA=1}&{break}}#t0=t0+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)
++     {   
++         ktt=kcgf(tt,xd,f)
++         if (!is.na(det(ktt$ddcgf)) && det(ktt$ddcgf)>.00000001)
++         {tt=tt+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)} else {{checkNA=1}&{break}}#t0=t0+solve(ktt$ddcgf)%*%(fx-ktt$dcgf)
 +         }
-+ 	ktt=kcgf(tt,xd,f)
-+ 	list(lam=-ktt$cgf+fx%*%tt,t=tt,kdd=ktt$ddcgf,err=fx-ktt$dcgf,checkNA=checkNA)
++     ktt=kcgf(tt,xd,f)
++     list(lam=-ktt$cgf+fx%*%tt,t=tt,kdd=ktt$ddcgf,err=fx-ktt$dcgf,checkNA=checkNA)
 + }
 > 
 > 
@@ -177,73 +176,6 @@ Type 'q()' to quit R.
 Loading required package: miscTools
 > 
 > 
-> #misha's programma
-> 
-> 
-> generateVector = function(randomGenerator, N) {
-+   a = randomGenerator(N)
-+   N = length(a)
-+   a = (a - mean(a)) / sqrt(var(a) * (N - 1) / N)
-+   a
-+ }
-> 
-> getMean = function(b, f) {
-+   k = length(f) + 1
-+   N = length(b)
-+   f1 = c(f, 1 - sum(f))
-+   n = f1 * N
-+   
-+   means = numeric(k - 1)
-+   lastIndex = 0
-+   for (i in 1 : (k - 1)) {
-+     nextIndex = lastIndex + n[i]
-+     means[i] = sum(b[(lastIndex + 1) : nextIndex]) / N;
-+     lastIndex = nextIndex
-+   }
-+   
-+   means
-+ }
-> 
-> PowerForMu = function(mu, distr, f, Z=1000, M=10000) {
-+   k = length(f) + 1
-+   N = length(mu)
-+   n = f*N
-+     
-+   pFValues = numeric(Z)
-+   #pLValues = numeric(Z)
-+   pSPLRValues = numeric(Z)
-+   pSPBNValues = numeric(Z)
-+   
-+   for (i in 1 : Z) {
-+     a = generateVector(distr, N)
-+     a = a + mu
-+     a = (a - mean(a)) / sqrt(var(a) * (N - 1) / N)
-+     Xbar = getMean(a, f)
-+     Fbar = c(Xbar, -sum(Xbar))
-+ 
-+     LVal = kLam(Xbar, rep(0, 2 * (k - 1)), a, f)
-+        u = sqrt(2*LVal$lam)
-+     FVal = c(N*Fbar%*%diag(1/c(n,N-sum(n)))%*%Fbar)
-+    
-+     FValues = pvalcal(a,f,MC=M)$MCsqpv
-+     #LValues = NULL
-+     
-+     pFValues[i] = mean(FValues > FVal)
-+     #pLValues[i] = mean(TValues > TVal)
-+ 	tt2 = kHu(a, f, u, 100)$tailp
-+     pSPLRValues[i] = tt2[1]
-+     pSPBNValues[i] = tt2[2]
-+   }
-+   
-+   PowerF = mean(pFValues < .05)
-+   #PowerL = mean(pLValues < .05)
-+   PowerSPLR = mean(pSPLRValues < .05)
-+   PowerSPBN = mean(pSPBNValues < .05)
-+ 
-+   list (PowerF = PowerF, PowerSPLR = PowerSPLR,PowerSPBN = PowerSPBN)
-+ }
-> 
-> 
 > generateVector = function(randomGenerator, N) {
 +   a = randomGenerator(N)
 +   N = length(a)
@@ -300,7 +232,7 @@ Loading required package: miscTools
 +    }
 +     
 +     pFValues[i] = mean(FValue > FVal)
-+     	tt2 = kHu(a, f, u, 10)$tailp
++         tt2 = kHu(a, f, u, 10)$tailp
 +     pSPLRValues[i] = tt2[1]
 +     pSPBNValues[i] = tt2[2]
 +   }
@@ -327,89 +259,41 @@ Loading required package: miscTools
 > 
 > f=c(.25,.25,.25)
 > 
-> #power norm
-> mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
-> PowerForMu(mu,rnorm,f,1000,1000)
-           [,1]
-PowerF    0.050
-PowerSPLR 0.047
-PowerSPBN 0.048
-> 
-> mu=c(rep(-.3,10),rep(0,10),rep(0,10),rep(.3,10))
-> PowerForMu(mu,rnorm,f,1000,1000)
-           [,1]
-PowerF    0.153
-PowerSPLR 0.148
-PowerSPBN 0.151
-> 
-> mu=c(rep(-.5,10),rep(0,10),rep(0,10),rep(.5,10))
-> PowerForMu(mu,rnorm,f,1000,1000)
-           [,1]
-PowerF    0.377
-PowerSPLR 0.384
-PowerSPBN 0.386
-> 
-> mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
-> PowerForMu(mu,rnorm,f,1000,1000)
-           [,1]
-PowerF    0.960
-PowerSPLR 0.957
-PowerSPBN 0.957
-> 
-> mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
-> PowerForMu(mu,rnorm,f,1000,1000)
-           [,1]
-PowerF    0.999
-PowerSPLR 0.999
-PowerSPBN 0.999
-> 
-> mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
-> PowerForMu(mu,rnorm,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-> PowerForMu(mu,rnorm,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-> PowerForMu(mu,rnorm,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> 
 > #power unif
 > mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
-> PowerForMu(mu,unif,f,1000,1000)
-Error in generateVector(distr, nn) : object 'unif' not found
-Calls: PowerForMu -> generateVector
+> PowerForMu(mu,runif,f,1000,1000)
+           [,1]
+PowerF    0.061
+PowerSPLR 0.060
+PowerSPBN 0.060
 > 
 > mu=c(rep(-.3,10),rep(0,10),rep(0,10),rep(.3,10))
-> PowerForMu(mu,unif,f,1000,1000)
-Error in generateVector(distr, nn) : object 'unif' not found
-Calls: PowerForMu -> generateVector
+> PowerForMu(mu,runif,f,1000,1000)
+           [,1]
+PowerF    0.163
+PowerSPLR 0.158
+PowerSPBN 0.159
 > 
 > mu=c(rep(-.5,10),rep(0,10),rep(0,10),rep(.5,10))
-> PowerForMu(mu,unif,f,1000,1000)
-Error in generateVector(distr, nn) : object 'unif' not found
-Calls: PowerForMu -> generateVector
+> PowerForMu(mu,runif,f,1000,1000)
+           [,1]
+PowerF    0.337
+PowerSPLR 0.337
+PowerSPBN 0.339
 > 
 > mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
-> PowerForMu(mu,unif,f,1000,1000)
-Error in generateVector(distr, nn) : object 'unif' not found
-Calls: PowerForMu -> generateVector
+> PowerForMu(mu,runif,f,1000,1000)
+           [,1]
+PowerF    0.965
+PowerSPLR 0.968
+PowerSPBN 0.969
 > 
 > mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
-> PowerForMu(mu,unif,f,1000,1000)
-Error in generateVector(distr, nn) : object 'unif' not found
-Calls: PowerForMu -> generateVector
+> PowerForMu(mu,runif,f,1000,1000)
+           [,1]
+PowerF    0.996
+PowerSPLR 0.996
+PowerSPBN 0.996
 > 
 > mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
 > PowerForMu(mu,runif,f,1000,1000)
@@ -418,19 +302,6 @@ PowerF       1
 PowerSPLR    1
 PowerSPBN    1
 > 
-> mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-> PowerForMu(mu,runif,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-> PowerForMu(mu,runif,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
 > 
 > #power exp
 > mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
@@ -441,49 +312,30 @@ Calls: PowerForMu -> kHu
 > mu=c(rep(-.3,10),rep(0,10),rep(0,10),rep(.3,10))
 > PowerForMu(mu,rexp,f,1000,1000)
            [,1]
-PowerF    0.185
-PowerSPLR 0.210
-PowerSPBN 0.213
+PowerF    0.167
+PowerSPLR 0.193
+PowerSPBN 0.195
 > 
 > mu=c(rep(-.5,10),rep(0,10),rep(0,10),rep(.5,10))
 > PowerForMu(mu,rexp,f,1000,1000)
            [,1]
-PowerF    0.378
-PowerSPLR 0.422
-PowerSPBN 0.425
+PowerF    0.415
+PowerSPLR 0.454
+PowerSPBN 0.456
 > 
 > mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
 > PowerForMu(mu,rexp,f,1000,1000)
-Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
-Calls: PowerForMu -> kHu
+          [,1]
+PowerF    0.96
+PowerSPLR 0.96
+PowerSPBN 0.96
 > 
 > mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
 > PowerForMu(mu,rexp,f,1000,1000)
            [,1]
-PowerF    0.999
-PowerSPLR 0.999
-PowerSPBN 0.999
-> 
-> mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
-> PowerForMu(mu,rexp,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-> PowerForMu(mu,rexp,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-> PowerForMu(mu,rexp,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
+PowerF    0.996
+PowerSPLR 0.997
+PowerSPBN 0.997
 > 
 > 
 > #power exponential squared
@@ -509,86 +361,59 @@ Calls: PowerForMu -> kHu
 > 
 > mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
 > PowerForMu(mu,rexp2,f,1000,1000)
-Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
-Calls: PowerForMu -> kHu
+          [,1]
+PowerF       1
+PowerSPLR    1
+PowerSPBN    1
 > 
 > mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
 > PowerForMu(mu,rexp2,f,1000,1000)
 Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
 Calls: PowerForMu -> kHu
-> 
-> mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-> PowerForMu(mu,rexp2,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> #power gamma5
-> mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-           [,1]
-PowerF    0.070
-PowerSPLR 0.077
-PowerSPBN 0.077
-> 
-> mu=c(rep(-.3,10),rep(0,10),rep(0,10),rep(.3,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-           [,1]
-PowerF    0.163
-PowerSPLR 0.174
-PowerSPBN 0.175
-> 
-> mu=c(rep(-.5,10),rep(0,10),rep(0,10),rep(.5,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-           [,1]
-PowerF    0.384
-PowerSPLR 0.374
-PowerSPBN 0.377
-> 
-> mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-           [,1]
-PowerF    0.957
-PowerSPLR 0.960
-PowerSPBN 0.960
-> 
-> mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-           [,1]
-PowerF    0.997
-PowerSPLR 0.998
-PowerSPBN 0.998
-> 
-> mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
-> 
-> mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
-> PowerForMu(mu,rgamma5,f,1000,1000)
-          [,1]
-PowerF       1
-PowerSPLR    1
-PowerSPBN    1
 > 
 > 
 > #power gamma05
 > mu=c(rep(-.1,10),rep(0,10),rep(0,10),rep(.1,10))
 > PowerForMu(mu,rgamma05,f,1000,1000)
+Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
+Calls: PowerForMu -> kHu
+> 
+> mu=c(rep(-.3,10),rep(0,10),rep(0,10),rep(.3,10))
+> PowerForMu(mu,rgamma05,f,1000,1000)
+           [,1]
+PowerF    0.170
+PowerSPLR 0.208
+PowerSPBN 0.214
+> 
+> mu=c(rep(-.5,10),rep(0,10),rep(0,10),rep(.5,10))
+> PowerForMu(mu,rgamma05,f,1000,1000)
+Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
+Calls: PowerForMu -> kHu
+> 
+> mu=c(rep(-1,10),rep(0,10),rep(0,10),rep(1,10))
+> PowerForMu(mu,rgamma05,f,1000,1000)
+Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
+Calls: PowerForMu -> kHu
+> 
+> mu=c(rep(-1.2,10),rep(0,10),rep(0,10),rep(1.2,10))
+> PowerForMu(mu,rgamma05,f,1000,1000)
+Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
+Calls: PowerForMu -> kHu
+> 
+> mu=c(rep(-1.4,10),rep(0,10),rep(0,10),rep(1.4,10))
+> PowerForMu(mu,rgamma05,f,1000,1000)
+Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
+Calls: PowerForMu -> kHu
+> 
+> mu=c(rep(-1.6,10),rep(0,10),rep(0,10),rep(1.6,10))
+> PowerForMu(mu,rgamma05,f,1000,1000)
+Error in sqrt(2 * kl$lam) : (converted from warning) NaNs produced
+Calls: PowerForMu -> kHu
+> 
+> mu=c(rep(-1.9,10),rep(0,10),rep(0,10),rep(1.9,10))
+> PowerForMu(mu,rgamma05,f,1000,1000)
+          [,1]
+PowerF       1
+PowerSPLR    1
+PowerSPBN    1
+> 
