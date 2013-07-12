@@ -1,50 +1,6 @@
 options(warn=2, error=quote(dump.frames("bd-acc-with-all-distr", TRUE)))
 
-Lambda = function(A, x, tolerance = 0.9999) {
-  k = getk(A)
-  if(isPointInsideDomain(A,x)==FALSE) x=.999*x
-  ll = function(beta) { beta %*% x - kappa(A, beta) }
-  lll = function(beta) { x - kappad(A, beta)[,1] }
-  llll = function(beta) { -kappad2(A, beta) }
-  lam = maxNR(ll, grad = lll, hess = llll, start = rep(0, k - 1), tol = 1 - tolerance)
-  lam
-}
-
-delta = function(A, u, s, deltaIterations = 5) {
-  k = getk(A)
-  r = u
-  V0h = V0h(A)
-  
-  for (i in 1 : deltaIterations) {
-    tr = transformIntoSphere(A, r, s)
-    while (isPointInsideDomain(A,tr)==FALSE) {
-    r=.9*r
-    tr = transformIntoSphere(A, r, s)}
-    
-    L = Lambda(A, tr)
-    r = r - ((L$max - u ^ 2 / 2) / (L$est %*% V0h %*% s))[1,1]
-       
-  }
-  
-  betah = L$est
-  
-  (det(kappad2(A, betah)) ^ (- 1 / 2) * r ^ (k - 2) * det(V0h)) / (u ^ (k - 3) * abs(t(s) %*% V0h %*% betah))
-}
-
-TailDistrMonteCarlo = function(A, u, M, deltaIterations = 5) {
-  k = getk(A)
-  b = getb(A)
-  
-  delta2 = function(s) delta(A, u, s, deltaIterations)
-  
-  cb = (b ^ ((k - 1) / 2)) / (2 ^ ((k - 1) / 2 - 1) * gamma((k - 1) / 2))
-  Gb = IntOnSphereMonteCarlo(delta2, k - 1, M)
-  
-  LugRice = 1 - pchisq(b * u ^ 2, k - 1) + cb / b * u ^ (k - 3) * exp(-b * u ^ 2 / 2) * (Gb - 1)
-  ustar = u - log(Gb) / (b * u)
-  NielCox = 1 - pchisq(b * ustar ^ 2, k - 1)
-  list(LR=c(LugRice), NC=c(NielCox))
-}
+source("PowerFunctions-fixed.R")
 
 rexp2 = function(N) {
   rexp(N) ^ 2
