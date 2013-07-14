@@ -223,8 +223,6 @@ for (j in 1 : M) {
   c(PowerF,PowerSP)
 }
 
-PowerForMu(mu,rexp,f,2,5)
-
  rexp2 = function(N) {
    rexp(N) ^ 2
  }
